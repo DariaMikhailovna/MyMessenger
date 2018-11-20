@@ -40,8 +40,6 @@ Thumbs.db
 
 .vs
 
-*.sln
-
 /MyMessengerBackend/MyMessengerBackend/bin/
 /MyMessengerBackend/MyMessengerBackend/obj/
 

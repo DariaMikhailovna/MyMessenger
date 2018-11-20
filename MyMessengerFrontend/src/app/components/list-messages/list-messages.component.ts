@@ -7,17 +7,14 @@ import {MessagesService} from '../../servises/messagesServise/messages.service';
   styleUrls: ['./list-messages.component.css']
 })
 export class ListMessagesComponent implements OnInit {
-  message: string[];
+  messages: string[] = [];
   constructor(private messagesService: MessagesService) { }
 
   ngOnInit() {
-    this.getMessages();
-  }
-  getMessages() {
-    this.messagesService
-      .getMessanges()
-      .subscribe(x => {
-        this.message = x;
-      });
+    const ws = new WebSocket('ws://localhost:49899/ws');
+    ws.onmessage = (event) => {
+      this.messages.push(event.data);
+      console.log(this.messages);
+    };
   }
 }

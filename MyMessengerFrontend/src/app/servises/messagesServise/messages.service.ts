@@ -11,7 +11,7 @@ export class MessagesService {
 
   constructor(private http: HttpClient) { }
 
-  getMessanges(): Observable<string[]> {
+  getMessages(): Observable<string[]> {
     const url = BackendUrl + '/Values';
     return this.http.get<string[]>(url);
   }

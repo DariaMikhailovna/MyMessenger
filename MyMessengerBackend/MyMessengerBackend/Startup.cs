@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -44,6 +48,39 @@ namespace MyMessengerBackend
                 builder.WithOrigins("http://localhost:49899/").AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            app.UseWebSockets();
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path == "/ws")
+                {
+                    if (context.WebSockets.IsWebSocketRequest)
+                    {
+                        WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                        await Talk(context, webSocket);
+                    }
+                    else
+                    {
+                        context.Response.StatusCode = 400;
+                    }
+                }
+                else
+                {
+                    await next();
+                }
+            });
+        }
+
+        private async Task Talk(HttpContext context, WebSocket webSocket)
+        {
+            for (var i = 0; true; ++i)
+            {
+                while (Program.PublicList.Count() <= i) {
+                    await Task.Delay(1000);
+                }
+                var buffer = new ArraySegment<byte>(Encoding.ASCII.GetBytes(Program.PublicList[i]));
+                await webSocket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+            }
         }
     }
 }

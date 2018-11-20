@@ -3,18 +3,21 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
-
+using System.Net.WebSockets;
+using System.Threading;
+using System.Text;
 
 namespace MyMessengerBackend
 {
     public class Program
     {
         public static List<string> PublicList = new List<string>();
+        public static int cnt = 0;
 
         public static void Main(string[] args)
         {
-            Timer t1 = new Timer();
-            t1.Interval = (10000); // 20 minutes...
+            System.Timers.Timer t1 = new System.Timers.Timer();
+            t1.Interval = (10000); 
             t1.Elapsed += new ElapsedEventHandler(t1_Elapsed);
             t1.AutoReset = true;
             t1.Start();
@@ -23,9 +26,8 @@ namespace MyMessengerBackend
 
         static void t1_Elapsed(object sender, ElapsedEventArgs e)
         {
-
-             PublicList.Add("dfkjaghdkjsfgh;kgh");
-
+            var newMessage = "Hello " + cnt++.ToString();
+            PublicList.Add(newMessage);
         }
         
 
